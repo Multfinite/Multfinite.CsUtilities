@@ -10,4 +10,6 @@
     public delegate T ReturnTypeDelegateArgs3<T, A1, A2, A3>(A1 arg1, A2 arg2, A3 arg3);
     public delegate void ActionArgs1<A1>(A1 arg1);
     public delegate void ActionArgs2<A1, A2>(A1 arg1, A2 arg2);
+
+	public delegate void CancelableAction<T>(T value, ref bool cancel);
 }
