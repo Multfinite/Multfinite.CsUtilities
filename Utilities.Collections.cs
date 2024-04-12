@@ -1,4 +1,6 @@
-﻿namespace Multfinite.Utilities
+﻿using System.Collections;
+
+namespace Multfinite.Utilities
 {
 	public static partial class Utilities
 	{
@@ -230,6 +232,15 @@
 					counts[item] = 1;
 			}
 			return counts;
+		}
+
+		public static List<T> ToList<T>(this IEnumerator src)
+		{
+			var list = new List<T>();
+			src.Reset();
+			while (src.MoveNext())
+				list.Add((T) src.Current);
+			return list;
 		}
 	}
 }
