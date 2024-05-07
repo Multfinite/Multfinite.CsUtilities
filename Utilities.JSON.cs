@@ -36,6 +36,8 @@ namespace Multfinite.Utilities
 						{
 							if (!a.Contains(ancestor))
 							{
+								if (!o.ContainsKey(ancestor))
+									throw new ArgumentException($"<{ancestor}> is missing in root object");
 								allAvaliable = false;
 								break;
 							}
