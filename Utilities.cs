@@ -35,6 +35,22 @@ namespace Multfinite.Utilities
 			return d;
 		}
 
+		public static void SplitFileRegex(this string src, out string dir, out Regex regex)
+		{
+			if(src.Contains('/'))
+			{
+				var separatorIndex = src.LastIndexOf('/');
+				dir = src.Substring(0, separatorIndex);
+				var r = src.Substring(separatorIndex + 1, src.Length - (separatorIndex + 1));
+				regex = new Regex(r, RegexOptions.IgnoreCase);
+			}
+			else
+			{
+				dir = "";
+				regex = new Regex(src);
+			}
+		}
+
 		public static List<FileInfo> GetFiles(this DirectoryInfo dir, Regex pattern)
 		{
 			var files = new List<FileInfo>();
