@@ -87,4 +87,17 @@ namespace Multfinite.Utilities
 		public static bool IsNullOrWhiteSpace(this string str) => string.IsNullOrWhiteSpace(str);
 		public static bool IsNullOrEmpty(this string str) => string.IsNullOrEmpty(str);
 	}
+
+	public class Pair<K, V>
+	{
+		public K Key;
+		public V Value;
+
+		public Pair() { }
+		public Pair(K key, V value)
+		{
+			Key = key;
+			Value = value;
+		}
+	}
 }
