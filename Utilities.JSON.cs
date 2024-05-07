@@ -7,7 +7,6 @@ namespace Multfinite.Utilities
 		public static JObject ExpandInheritance(this JObject o, string ancestorKey = "_inherit")
 		{
 			var a = new List<string>();
-			var b = new List<string>();
 
 			foreach(var item in o)
 			{
@@ -16,27 +15,47 @@ namespace Multfinite.Utilities
 					a.Add(item.Key);
 			}
 
-			while(a.Count > 0)
+			while(a.Count != o.Count)
 			{
 				foreach (var item in o)
 				{
 					var io = item.Value as JObject;
 					if (io.ContainsKey(ancestorKey))
 					{
-						var ancestor = io[ancestorKey].ToString();
-						if (!a.Contains(ancestor))
+						List<string> ancestors = new List<string>();
+						var ancestorProp = io[ancestorKey];
+						if (ancestorProp is JArray array)
+							ancestors.AddRange(array.ToArray().ToList().ConvertAll((x) => x.ToString()));
+						else if (ancestorProp is JValue value)
+							ancestors.Add(value.ToString());
+
+						ancestors.Reverse(); // the last item has the lowest priority
+
+						bool allAvaliable = true; // All ancestors should be processed
+						foreach(var ancestor in ancestors)
+						{
+							if (!a.Contains(ancestor))
+							{
+								allAvaliable = false;
+								break;
+							}
+						}
+						if (!allAvaliable)
 							continue;
-						var ancestorObj = o[ancestor] as JObject;
-						var merged = ancestorObj.DeepClone() as JObject;
-						merged.Merge(io);
-						merged.Remove(ancestorKey);
-						o[item.Key] = merged;
-						b.Add(item.Key);
+
+						var obj = new JObject();
+						foreach (var ancestor in ancestors)
+						{
+							var objBase = (o[ancestor] as JObject).DeepClone() as JObject;
+							//objBase.Remove(ancestorKey); // ANCESTOR SHOULD NEVER HAVE THIS KEY
+							obj.Merge(objBase);							
+						}
+						obj.Merge(io);
+						obj.Remove(ancestorKey);
+						o[item.Key] = obj;
+						a.Add(item.Key);
 					}
 				}
-
-				var c = a; a = b; b = c;
-				b.Clear();
 			}
 			return o;
 		}
