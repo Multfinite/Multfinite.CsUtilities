@@ -13,6 +13,9 @@ namespace Multfinite.Utilities
 				{ foreach (var obj in copyFrom) collection.Add(obj); }
 		}
 
+		public static void RemoveRange<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, IEnumerable<TKey> keys)
+		{ foreach (var key in keys) dictionary.Remove(key); }
+
 		public static IDictionary<K, V> Merge<K, V>(this IDictionary<K, V> to, IDictionary<K, V> from)
 		{
 			foreach (var kvp in from)
@@ -241,6 +244,18 @@ namespace Multfinite.Utilities
 			while (src.MoveNext())
 				list.Add((T) src.Current);
 			return list;
+		}
+
+		public static void Combine<T>(this ICollection<T> src, params IEnumerable<T>[] items)
+		{
+			foreach (var item in items)
+				src.AddRange(item);
+		}
+
+		public static void Combine<TKey, TValue>(this IDictionary<TKey, TValue> src, params IDictionary<TKey, TValue>[] items)
+		{
+			foreach (var item in items)
+				src.AddRange(item);
 		}
 	}
 }
