@@ -11,6 +11,30 @@ namespace Multfinite.Utilities
 			return fileName;
 		}
 
+		public static DirectoryInfo GetSubdirectory(this DirectoryInfo dir, string subdir, bool create = false)
+		{
+			if (string.IsNullOrWhiteSpace(subdir))
+				return dir;
+			var d = dir.GetDirectories().ToList().Find((x) => x.Name.ToLower() == subdir.ToLower());
+			if (d == null)
+				if (create)
+					d = dir.CreateSubdirectory(subdir);
+				else throw new DirectoryNotFoundException(Path.Combine(dir.FullName, subdir));
+			return d;
+		}
+
+		public static DirectoryInfo GetDirectory(this string dir, DirectoryInfo rootDir = null, bool create = false)
+		{
+			if (rootDir == null)
+				rootDir = new DirectoryInfo(Environment.CurrentDirectory);
+			if (string.IsNullOrWhiteSpace(dir))
+				return rootDir;
+			var d = Path.IsPathRooted(dir) ? new DirectoryInfo(dir) : rootDir.GetSubdirectory(dir, create);
+			if (!d.Exists)
+				d.Create();
+			return d;
+		}
+
 		public static List<FileInfo> GetFiles(this DirectoryInfo dir, Regex pattern)
 		{
 			var files = new List<FileInfo>();
